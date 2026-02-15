@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BINGO Game Shop</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --accent: #00d2ff; 
+            --secondary: #e94560; 
+            --glass: rgba(15, 15, 15, 0.9); 
+            --border: rgba(255, 255, 255, 0.12); 
+        }
+        
+        body { 
+            background: #000; 
+            background-image: radial-gradient(circle at 50% -20%, #00d2ff15, transparent),
+                              radial-gradient(circle at 0% 100%, #e9456010, transparent);
+            background-attachment: fixed;
+            color: white; 
+            font-family: 'Rajdhani', sans-serif;
+            margin: 0; padding: 20px; 
+            display: flex; flex-direction: column; align-items: center; 
+            min-height: 100vh;
+        }
+
+        h1 { 
+            font-size: 1.8rem; 
+            font-weight: 700;
+            letter-spacing: 2px; 
+            text-transform: uppercase; 
+            margin-bottom: 5px; 
+            color: #fff;
+            text-shadow: 0 0 10px var(--accent);
+        }
+        
+        .tabs { display: flex; background: rgba(255,255,255,0.05); padding: 5px; border-radius: 15px; border: 1px solid var(--border); margin: 20px 0; width: 100%; max-width: 320px; position: sticky; top: 10px; z-index: 1000; backdrop-filter: blur(15px); }
+        .tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; border-radius: 12px; font-weight: bold; color: #888; transition: 0.3s; font-size: 1rem; }
+        .tab.active { background: var(--accent); color: #000; box-shadow: 0 0 20px var(--accent); }
+
+        .grid { display: none; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%; max-width: 500px; }
+        .grid.active { display: grid; }
+
+        .card { background: var(--glass); border: 1px solid var(--border); border-radius: 18px; padding: 25px 5px 20px 5px; text-align: center; position: relative; overflow: visible; }
+        
+        /* Special Header Card */
+        .card.special { 
+            grid-column: span 2; 
+            border: 1.5px solid var(--accent); 
+            background: linear-gradient(135deg, rgba(0, 210, 255, 0.15), rgba(0, 0, 0, 0.5));
+            margin-bottom: 5px;
+        }
+
+        .val-container { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; transition: 0.3s; }
+        .item-icon { width: 26px; height: 26px; object-fit: contain; }
+        .val-text { font-size: 1.15rem; font-weight: 700; color: #fff; }
+
+        .price-row { display: flex; justify-content: center; align-items: center; gap: 4px; font-size: 1.1rem; font-weight: 700; transition: 0.3s; }
+        .p-num { color: #ffffff; }
+        .p-ks { color: var(--accent); }
+        .price-glow { text-shadow: 0 0 8px var(--accent); animation: softPulse 2s infinite alternate; }
+
+        @keyframes softPulse { from { opacity: 0.8; } to { opacity: 1; filter: brightness(1.2); } }
+
+        /* MASKING: Hide price, keep Icon visible */
+        .card.na .price-row, .card.so .price-row { visibility: hidden; opacity: 0; }
+        .card.na .val-container, .card.so .val-container { opacity: 0.4; filter: grayscale(1); }
+
+        .tag { position: absolute; top: -10px; right: 10px; font-size: 0.6rem; padding: 4px 10px; border-radius: 8px; font-weight: bold; z-index: 10; text-transform: uppercase; }
+        .tag-hot { background: var(--secondary); color: white; box-shadow: 0 4px 10px rgba(233, 69, 96, 0.3); }
+        .tag-best { background: #FFD700; color: #000; box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3); }
+        
+        /* Lowered status label */
+        .status-label { 
+            position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); 
+            background: #e94560; color: white; padding: 7px 0; border-radius: 6px; 
+            font-size: 0.7rem; width: 90%; z-index: 100; font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5); white-space: nowrap;
+        }
+        .na .status-label { background: #444; }
+
+        .footer { margin-top: 40px; text-align: center; background: rgba(255,255,255,0.03); padding: 25px; border-radius: 20px; width: 100%; max-width: 350px; border: 1px solid var(--border); margin-bottom: 20px; }
+        .social-icons { display: flex; justify-content: center; gap: 40px; margin-top: 20px; }
+        .icon img { width: 45px; height: 45px; }
+
+        @media (max-width: 380px) { .val-text { font-size: 1rem; } .price-row { font-size: 0.95rem; } }
+    </style>
+</head>
+<body>
+    <h1>BINGO Game Shop</h1>
+
+    <div class="tabs">
+        <div class="tab active" onclick="showGame('mlbb', this)">MLBB</div>
+        <div class="tab" onclick="showGame('pubg', this)">PUBG</div>
+    </div>
+
+    <div id="mlbb-list" class="grid active">
+        <!-- MLBB cards will be generated here by JavaScript -->
+    </div>
+
+    <div id="pubg-list" class="grid">
+        <!-- PUBG cards will be generated here by JavaScript -->
+    </div>
+
+    <div class="footer">
+        <div style="font-weight: bold; letter-spacing: 2px; font-size: 0.9rem; color: #888;">ဝယ်ယူလိုပါက</div>
+        <div class="social-icons">
+            <a href="tg://resolve?domain=gg" class="icon"><img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg"></a>
+            <a href="https://m.me/YOUR_PAGE_ID" class="icon"><img src="https://upload.wikimedia.org/wikipedia/commons/b/be/Facebook_Messenger_logo_2020.svg"></a>
+        </div>
+    </div>
+
+    <script>
+        // Configuration - Replace with your VPS domain
+        const API_URL = "https://wpl.969959.xyz/api/prices";
+        
+        // Game icons
+        const ICONS = {
+            mlbb: "https://www.pngall.com/wp-content/uploads/18/Mobile-Legends-Diamond-Icon-PNG.png",
+            pubg: "https://i0.wp.com/news.seagm.com/wp-content/uploads/2025/01/gggg.webp",
+            special: "https://kaleoz-media.seagmcdn.com/kaleoz-store/202507/oss-5688309140de008981f3f4ea00164752.png"
+        };
+
+        // Initialize the application
+        document.addEventListener("DOMContentLoaded", function() {
+            loadPrices();
+        });
+
+        // Fetch prices from API
+        async function loadPrices() {
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                renderPrices(data);
+            } catch (error) {
+                console.error("Error fetching prices:", error);
+                // Fallback to hardcoded data if API is not available
+                const fallbackData = {
+                    mlbb: [
+                        {"dia": "11", "ks": "1000", "tag": "NA"},
+                        {"dia": "22", "ks": "2000", "tag": "NA"},
+                        {"dia": "275", "ks": "14800", "tag": "HOT"},
+                        {"dia": "565", "ks": "30400", "tag": "HOT"},
+                        {"dia": "Weekly Pass", "ks": "6000", "tag": "SPECIAL"}
+                    ],
+                    pubg: [
+                        {"uc": "60", "ks": "3800", "tag": "HOT"},
+                        {"uc": "325", "ks": "19000", "tag": "HOT"},
+                        {"uc": "8100", "ks": "380000", "tag": ""}
+                    ]
+                };
+                renderPrices(fallbackData);
+            }
+        }
+
+        // Render prices for both games
+        function renderPrices(data) {
+            renderGameCards('mlbb', data.mlbb);
+            renderGameCards('pubg', data.pubg);
+        }
+
+        // Render cards for a specific game
+        function renderGameCards(game, items) {
+            const container = document.getElementById(`${game}-list`);
+            container.innerHTML = ''; // Clear existing content
+
+            items.forEach((item, index) => {
+                const card = createCard(game, item, index);
+                container.appendChild(card);
+            });
+        }
+
+        // Create a card element
+        function createCard(game, item, index) {
+            const card = document.createElement('div');
+            card.className = `card ${item.tag ? item.tag.toLowerCase() : ''}`;
+            
+            // Add special class for Weekly Pass
+            if (item.dia === "Weekly Pass") {
+                card.classList.add('special');
+            }
+
+            // Create tag element if needed
+            if (item.tag === 'HOT') {
+                const tag = document.createElement('div');
+                tag.className = 'tag tag-hot';
+                tag.textContent = 'HOT';
+                card.appendChild(tag);
+            }
+
+            // Create status label if needed
+            if (item.tag === 'NA' || item.tag === 'SO') {
+                const statusLabel = document.createElement('div');
+                statusLabel.className = 'status-label';
+                statusLabel.textContent = item.tag === 'NA' ? 'ပစ္စည်းဝယ်မရသေးပါ' : 'ပစ္စည်းပြတ်နေပါတယ်';
+                card.appendChild(statusLabel);
+            }
+
+            // Create value container
+            const valContainer = document.createElement('div');
+            valContainer.className = 'val-container';
+
+            const icon = document.createElement('img');
+            icon.className = 'item-icon';
+            icon.src = item.dia === "Weekly Pass" ? ICONS.special : ICONS[game];
+            icon.alt = game;
+
+            const valText = document.createElement('span');
+            valText.className = 'val-text';
+            if (item.dia) {
+                valText.textContent = item.dia;
+            } else if (item.uc) {
+                valText.textContent = `${item.uc} UC`;
+            }
+
+            valContainer.appendChild(icon);
+            valContainer.appendChild(valText);
+
+            // Create price row
+            const priceRow = document.createElement('div');
+            priceRow.className = 'price-row price-glow';
+
+            const pNum = document.createElement('span');
+            pNum.className = 'p-num';
+            pNum.textContent = formatNumber(item.ks);
+
+            const pKs = document.createElement('span');
+            pKs.className = 'p-ks';
+            pKs.textContent = 'Ks';
+
+            priceRow.appendChild(pNum);
+            priceRow.appendChild(pKs);
+
+            card.appendChild(valContainer);
+            card.appendChild(priceRow);
+
+            return card;
+        }
+
+        // Format number with commas
+        function formatNumber(num) {
+            return Number(num.replace(/,/g, '')).toLocaleString();
+        }
+
+        // Show specific game tab
+        function showGame(game, el) {
+            document.querySelectorAll('.grid').forEach(g => g.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(`${game}-list`).classList.add('active');
+            el.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
