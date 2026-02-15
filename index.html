@@ -44,7 +44,6 @@
 
         .card { background: var(--glass); border: 1px solid var(--border); border-radius: 18px; padding: 25px 5px 20px 5px; text-align: center; position: relative; overflow: visible; }
         
-        /* Special Header Card */
         .card.special { 
             grid-column: span 2; 
             border: 1.5px solid var(--accent); 
@@ -63,7 +62,6 @@
 
         @keyframes softPulse { from { opacity: 0.8; } to { opacity: 1; filter: brightness(1.2); } }
 
-        /* MASKING: Hide price, keep Icon visible */
         .card.na .price-row, .card.so .price-row { visibility: hidden; opacity: 0; }
         .card.na .val-container, .card.so .val-container { opacity: 0.4; filter: grayscale(1); }
 
@@ -71,7 +69,6 @@
         .tag-hot { background: var(--secondary); color: white; box-shadow: 0 4px 10px rgba(233, 69, 96, 0.3); }
         .tag-best { background: #FFD700; color: #000; box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3); }
         
-        /* Lowered status label */
         .status-label { 
             position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); 
             background: #e94560; color: white; padding: 7px 0; border-radius: 6px; 
@@ -96,38 +93,32 @@
     </div>
 
     <div id="mlbb-list" class="grid active">
-        <!-- MLBB cards will be generated here by JavaScript -->
     </div>
 
     <div id="pubg-list" class="grid">
-        <!-- PUBG cards will be generated here by JavaScript -->
     </div>
 
     <div class="footer">
         <div style="font-weight: bold; letter-spacing: 2px; font-size: 0.9rem; color: #888;">ဝယ်ယူလိုပါက</div>
         <div class="social-icons">
-            <a href="tg://resolve?domain=gg" class="icon"><img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg"></a>
-            <a href="https://m.me/YOUR_PAGE_ID" class="icon"><img src="https://upload.wikimedia.org/wikipedia/commons/b/be/Facebook_Messenger_logo_2020.svg"></a>
+            <a href="tg://resolve?domain=KomeNome" class="icon"><img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg"></a>
+            <a href="https://m.me/KomeNome.flac" class="icon"><img src="https://upload.wikimedia.org/wikipedia/commons/b/be/Facebook_Messenger_logo_2020.svg"></a>
         </div>
     </div>
 
     <script>
-        // Configuration - Replace with your VPS domain
         const API_URL = "https://wpl.969959.xyz:8443/api/prices";
         
-        // Game icons
         const ICONS = {
             mlbb: "https://www.pngall.com/wp-content/uploads/18/Mobile-Legends-Diamond-Icon-PNG.png",
             pubg: "https://i0.wp.com/news.seagm.com/wp-content/uploads/2025/01/gggg.webp",
             special: "https://kaleoz-media.seagmcdn.com/kaleoz-store/202507/oss-5688309140de008981f3f4ea00164752.png"
         };
 
-        // Initialize the application
         document.addEventListener("DOMContentLoaded", function() {
             loadPrices();
         });
 
-        // Fetch prices from API
         async function loadPrices() {
             try {
                 const response = await fetch(API_URL);
@@ -138,7 +129,6 @@
                 renderPrices(data);
             } catch (error) {
                 console.error("Error fetching prices:", error);
-                // Fallback to hardcoded data if API is not available
                 const fallbackData = {
                     mlbb: [
                         {"dia": "11", "ks": "1000", "tag": "NA"},
@@ -157,16 +147,14 @@
             }
         }
 
-        // Render prices for both games
         function renderPrices(data) {
             renderGameCards('mlbb', data.mlbb);
             renderGameCards('pubg', data.pubg);
         }
 
-        // Render cards for a specific game
         function renderGameCards(game, items) {
             const container = document.getElementById(`${game}-list`);
-            container.innerHTML = ''; // Clear existing content
+            container.innerHTML = '';
 
             items.forEach((item, index) => {
                 const card = createCard(game, item, index);
@@ -174,17 +162,14 @@
             });
         }
 
-        // Create a card element
         function createCard(game, item, index) {
             const card = document.createElement('div');
             card.className = `card ${item.tag ? item.tag.toLowerCase() : ''}`;
             
-            // Add special class for Weekly Pass
             if (item.dia === "Weekly Pass") {
                 card.classList.add('special');
             }
 
-            // Create tag element if needed
             if (item.tag === 'HOT') {
                 const tag = document.createElement('div');
                 tag.className = 'tag tag-hot';
@@ -192,7 +177,6 @@
                 card.appendChild(tag);
             }
 
-            // Create status label if needed
             if (item.tag === 'NA' || item.tag === 'SO') {
                 const statusLabel = document.createElement('div');
                 statusLabel.className = 'status-label';
@@ -200,7 +184,6 @@
                 card.appendChild(statusLabel);
             }
 
-            // Create value container
             const valContainer = document.createElement('div');
             valContainer.className = 'val-container';
 
@@ -220,7 +203,6 @@
             valContainer.appendChild(icon);
             valContainer.appendChild(valText);
 
-            // Create price row
             const priceRow = document.createElement('div');
             priceRow.className = 'price-row price-glow';
 
@@ -241,12 +223,10 @@
             return card;
         }
 
-        // Format number with commas
         function formatNumber(num) {
             return Number(num.replace(/,/g, '')).toLocaleString();
         }
 
-        // Show specific game tab
         function showGame(game, el) {
             document.querySelectorAll('.grid').forEach(g => g.classList.remove('active'));
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
