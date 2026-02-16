@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>BINGO Game Shop</title>
+    <link rel="icon" href="favicon.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root { 
@@ -166,7 +167,10 @@
             const card = document.createElement('div');
             card.className = `card ${item.tag ? item.tag.toLowerCase() : ''}`;
             
-            if (item.dia === "Weekly Pass") {
+            // Handle Weekly Pass alias mapping for display
+            const displayDia = item.dia === "WP" ? "Weekly Pass" : item.dia;
+            
+            if (displayDia === "Weekly Pass") {
                 card.classList.add('special');
             }
 
@@ -189,13 +193,13 @@
 
             const icon = document.createElement('img');
             icon.className = 'item-icon';
-            icon.src = item.dia === "Weekly Pass" ? ICONS.special : ICONS[game];
+            icon.src = displayDia === "Weekly Pass" ? ICONS.special : ICONS[game];
             icon.alt = game;
 
             const valText = document.createElement('span');
             valText.className = 'val-text';
-            if (item.dia) {
-                valText.textContent = item.dia;
+            if (displayDia) {
+                valText.textContent = displayDia;
             } else if (item.uc) {
                 valText.textContent = `${item.uc} UC`;
             }
