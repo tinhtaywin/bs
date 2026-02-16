@@ -179,13 +179,13 @@
             const card = document.createElement('div');
             card.className = `card ${item.tag ? item.tag.toLowerCase() : ''}`;
             
-            // Handle Weekly Pass alias mapping for display
-            const displayDia = item.dia === "WP" ? "Weekly Pass" : item.dia;
+        // Handle Weekly Diamond Pass alias mapping for display
+            const displayDia = item.dia === "WP" ? "Weekly Diamond Pass" : item.dia;
             
-            if (displayDia === "Weekly Pass") {
+            if (displayDia === "Weekly Diamond Pass") {
                 card.classList.add('special');
                 
-                // Add Best Selling Item badge for Weekly Pass
+                // Add Best Selling Item badge for Weekly Diamond Pass
                 const bestTag = document.createElement('div');
                 bestTag.className = 'tag tag-best';
                 bestTag.textContent = 'Best Selling Item';
@@ -211,7 +211,7 @@
 
             const icon = document.createElement('img');
             icon.className = 'item-icon';
-            icon.src = displayDia === "Weekly Pass" ? ICONS.special : ICONS[game];
+            icon.src = displayDia === "Weekly Diamond Pass" ? ICONS.special : ICONS[game];
             icon.alt = game;
 
             const valText = document.createElement('span');
