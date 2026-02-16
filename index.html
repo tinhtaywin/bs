@@ -149,7 +149,19 @@
         }
 
         function renderPrices(data) {
-            renderGameCards('mlbb', data.mlbb);
+            // Sort MLBB items: WP first, then numeric order
+            const sortedMlbb = [...data.mlbb].sort((a, b) => {
+                const aIsWP = a.dia === "WP";
+                const bIsWP = b.dia === "WP";
+                if (aIsWP && !bIsWP) return -1;
+                if (!aIsWP && bIsWP) return 1;
+                // Both are WP or both are not WP, sort by numeric value
+                const aNum = parseInt(a.dia) || 0;
+                const bNum = parseInt(b.dia) || 0;
+                return aNum - bNum;
+            });
+            
+            renderGameCards('mlbb', sortedMlbb);
             renderGameCards('pubg', data.pubg);
         }
 
@@ -172,6 +184,12 @@
             
             if (displayDia === "Weekly Pass") {
                 card.classList.add('special');
+                
+                // Add Best Selling Item badge for Weekly Pass
+                const bestTag = document.createElement('div');
+                bestTag.className = 'tag tag-best';
+                bestTag.textContent = 'Best Selling Item';
+                card.appendChild(bestTag);
             }
 
             if (item.tag === 'HOT') {
